@@ -116,14 +116,22 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+/*
+ * Audio
+ */
 let analyser, uniforms;
 const FFT_SIZE = 512 * 2;
 const bandCount = 8;
 const frequencyBands = new Uint8Array(bandCount);
+const normalizedFrequencyBands = new Uint8Array(bandCount);
+const heighestAmplitudePerBand = new Uint8Array(bandCount);
 
-/*
- * Audio
- */
+for (let i = 0; i < bandCount; i++) {
+  frequencyBands[i] = 0;
+  normalizedFrequencyBands[i] = 0;
+  heighestAmplitudePerBand[i] = 0;
+}
+
 function initSound() {
   const listener = new THREE.AudioListener();
   const audio = new THREE.Audio(listener);
@@ -141,7 +149,12 @@ function initSound() {
 
   uniforms = {
     tAudioData: {
-      value: new THREE.DataTexture(frequencyBands, bandCount, 1, format),
+      value: new THREE.DataTexture(
+        normalizedFrequencyBands,
+        bandCount,
+        1,
+        format
+      ),
     },
   };
 
@@ -187,6 +200,13 @@ function updateFrequencyBandData() {
       (frequencyBands[i] * averageFactor +
         (1 - averageFactor) * nextFrequencyBands[i]) /
       2.0;
+
+    if (frequencyBands[i] > heighestAmplitudePerBand[i]) {
+      heighestAmplitudePerBand[i] = frequencyBands[i];
+    }
+
+    normalizedFrequencyBands[i] =
+      (frequencyBands[i] / heighestAmplitudePerBand[i]) * 100;
   }
 }
 
@@ -206,6 +226,7 @@ const tick = () => {
 
   const frequencyData = analyser.getFrequencyData();
   updateFrequencyBandData();
+  console.log("normalizedFrequencyBands", normalizedFrequencyBands);
 
   uniforms.tAudioData.value.needsUpdate = true;
   //   uniforms.frequencyBands.value = frequencyBands;
