@@ -23,7 +23,7 @@ export function initCommonUniforms() {
   document.addEventListener("windowresize", onWindowResize);
 }
 
-export function getCommonUniforms() {
+export default function getCommonUniforms() {
   return commonUniforms;
 }
 

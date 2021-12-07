@@ -1,19 +1,15 @@
+// DOES NOT WORK CURRENTLY
+
 // switch on high precision floats
 precision highp float;
 
 uniform highp vec2 uMouse;
 uniform highp float uTime;
 uniform highp float uDisplacementScale;
+uniform mediump float uTileSpacing;
 uniform sampler2D tAudioData;
 
-
 varying float vDisplacement;
-
-
-// attribute highp vec3 normal;
-// attribute highp vec3 position;
-// attribute highp mat4 projectionMatrix;
-// attribute highp mat4 modelViewMatrix;
 
 varying vec3 myNormal;
 
@@ -25,27 +21,30 @@ float rand(vec3 x) {
 // A single value from a vector
         float soundValue = texture2D( tAudioData, vec2(0.6, 0.0 ) ).r;
         return abs(sin(cos(dot(x,vec3(soundValue)))* 100.));
-        //         return abs(sin(cos(dot(x,vec3(0.0, sin(uTime/10.0), 0.0)+1.))* 100.));
-
 }
 
 void main() {
-    float angle = uTime;
+    float angle = 0.0;
     //rotation
     mat4 rotateX = mat4(1,0,0,0,0,cos(angle),sin(angle),0,0,-sin(angle),cos(angle),0,0,0,0,1);
     //mat4 scale = mat4(0.33,0.0,0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,1.0);
 
     myNormal = normal;
 
-    float f = texture2D( tAudioData, vec2( 0.0, 0.0 ) ).r;
-
-    float randDisplacement = (1.0 +(0.75 * (rand(position)) / uDisplacementScale ));
-    float soundValue = texture2D( tAudioData, vec2(0.6, 0.0 ) ).r;
-    // float soundScale = (soundValue-0.5);
-    float soundDisplacement = 1.0 + soundValue / (10.0 * (2.0 - randDisplacement));
+    
+    vec3 newPosition = position;
 
     // this is what is causing the normal issue...
-    vec3 newPosition = (position * randDisplacement) * soundDisplacement;
+    // if (mod(100000.0, (uv.x)*100.0) == 0.0 && mod(100000.0, (uv.y)*100.0) == 0.0) {
+    //     newPosition *= 2.0;
+    // }
+    float theta = floor(abs(atan(position.z, position.y)) * 10000.0);
+    float phi = floor(abs(atan(position.y, position.z)) * 10000.0);
+
+    if (mod(theta, 10.0) == 0.0 && mod(phi, 10.0) == 0.0) {
+        newPosition *= 2.0;
+    }
+
     
     // we need to make the new positions into a vec4 so we can apply the rotation matrix
     vec4 rotatedPos = rotateX * vec4(newPosition,1.0);

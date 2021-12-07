@@ -13,10 +13,10 @@ const normalizedFrequencyBands = new Uint8Array(BAND_COUNT);
 
 const gui = getGui();
 const debugValues = {
-  averageFactor: 0.25,
+  averageFactor: 0.5,
 };
 
-gui
+const averageFactorController = gui
   .add(debugValues, "averageFactor")
   .min(0)
   .max(1)
@@ -93,6 +93,10 @@ export function initSound({ renderer, scene }) {
   });
   analyserMesh = new THREE.Mesh(analyserGeometry, analyserMaterial);
   scene.add(analyserMesh);
+}
+
+export function setAverageFactor(averageFactor) {
+  averageFactorController.setValue(averageFactor);
 }
 
 export function setAnalyserMeshVisibility(isAnalyserMeshVisible) {
