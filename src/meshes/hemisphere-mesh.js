@@ -82,7 +82,7 @@ export function createHemispherePair() {
   return [rightHemisphere, leftHemisphere];
 }
 
-export function createSegmentedSphere({ segmentCount } = { segmentCount: 4 }) {
+export function createSegmentedSphere({ segmentCount } = { segmentCount: 2 }) {
   const segmentedSphereGui = getGui().addFolder(`Segmented Sphere Mesh`);
   const analyserUniformData = getAnalyserUniformData();
   const sphereSegments = [];
@@ -102,6 +102,11 @@ export function createSegmentedSphere({ segmentCount } = { segmentCount: 4 }) {
     uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },
     uColorOffset: { value: 0.5 },
     uColorMultiplier: { value: 10.0 },
+
+    uNoiseFactor: { value: 0.8 },
+    uNoiseSpeed: { value: 1.0 },
+    uNoiseScale: { value: 1.0 },
+    uNoiseDisplacementFactor: { value: 0.25 },
   };
 
   for (let i = 0; i < segmentCount; i++) {
@@ -155,6 +160,31 @@ export function createSegmentedSphere({ segmentCount } = { segmentCount: 4 }) {
     .max(1.0)
     .step(0.001)
     .name("Max Audio Threshold");
+
+  segmentedSphereGui
+    .add(sharedUniforms.uNoiseFactor, "value")
+    .min(0)
+    .max(1.0)
+    .step(0.001)
+    .name("Noise factor");
+  segmentedSphereGui
+    .add(sharedUniforms.uNoiseSpeed, "value")
+    .min(0)
+    .max(4.0)
+    .step(0.001)
+    .name("Noise speed");
+  segmentedSphereGui
+    .add(sharedUniforms.uNoiseScale, "value")
+    .min(0)
+    .max(10.0)
+    .step(0.001)
+    .name("Noise scale");
+  segmentedSphereGui
+    .add(sharedUniforms.uNoiseDisplacementFactor, "value")
+    .min(0)
+    .max(1.0)
+    .step(0.001)
+    .name("Noise displacement factor");
 
   segmentedSphereGui
     .addColor(debugObject, "depthColor")
