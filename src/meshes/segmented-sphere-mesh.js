@@ -11,78 +11,24 @@ import vertexShader from "../shaders/hemisphere/vertex.glsl";
 import fragmentShader from "../shaders/hemisphere/fragment.glsl";
 import { GUI } from "lil-gui";
 
-export default function createHemisphereMesh({ isLeft } = { isLeft: true }) {
-  const hemisphereGui = getGui().addFolder(`Hemisphere Mesh`);
-  const analyserUniformData = getAnalyserUniformData();
+const SURFACE_COLOR = new THREE.Color("#a60808");
 
-  let phiStart = 0;
-  let thetaStart = 0;
-  //   if (!isLeft) {
-  //     phiStart = Math.PI / 2.0;
-  //     thetaStart = Math.PI / 2.0;
-  //   }
+function getStartColor({ angle, useDifferentColors }) {
+  if (!useDifferentColors) return SURFACE_COLOR;
 
-  const hemisphereGeometry = new THREE.SphereGeometry(
-    1,
-    32,
-    32,
-    phiStart,
-    2 * Math.PI,
-    thetaStart,
-    Math.PI / 2
-  );
+  const startR = SURFACE_COLOR.r;
+  const startG = SURFACE_COLOR.g;
+  const b = SURFACE_COLOR.b;
 
-  //   const hemisphereMaterial = new THREE.MeshBasicMaterial({
-  //     color: 0xffff00,
-  //     side: THREE.DoubleSide,
-  //   });
-  const hemisphereMaterial = new THREE.ShaderMaterial({
-    vertexShader,
-    fragmentShader,
-    uniforms: {
-      ...getCommonUniforms(),
-      ...analyserUniformData,
+  const r = startR + Math.sin(angle) / 5.0;
+  const g = startG + Math.cos(angle) / 5.0;
 
-      uMaxAudioThreshold: { value: 0.3 },
-      isLeft: { value: isLeft },
-    },
-    side: THREE.DoubleSide,
-  });
-
-  const hemisphere = new THREE.Mesh(hemisphereGeometry, hemisphereMaterial);
-  hemisphere.rotation.z = Math.PI / 2;
-  hemisphere.position.z = -2;
-
-  hemisphereGui
-    .add(hemisphereMaterial.uniforms.uMaxAudioThreshold, "value")
-    .min(0)
-    .max(1.0)
-    .step(0.001)
-    .name("uMaxAudioThreshold");
-  hemisphereGui.add(hemisphereMaterial.uniforms.isLeft, "value").name("isLeft");
-
-  return hemisphere;
-  //   const material = new THREE.ShaderMaterial({
-  //     vertexShader,
-  //     fragmentShader,
-  //     uniforms: {
-  //       ...getCommonUniforms(),
-  //       ...analyserUniformData,
-
-  //       uTileFrequency: { value: 4.0 },
-  //       uSpikeAmplitude: { value: 0.1 },
-  //     },
-  //   });
+  return new THREE.Color(r, g, b);
 }
 
-export function createHemispherePair() {
-  const rightHemisphere = createHemisphereMesh({ isLeft: false });
-  const leftHemisphere = createHemisphereMesh({ isLeft: true });
-
-  return [rightHemisphere, leftHemisphere];
-}
-
-export function createSegmentedSphere({ segmentCount } = { segmentCount: 2 }) {
+export default function createSegmentedSphere(
+  { segmentCount } = { segmentCount: 2 }
+) {
   const segmentedSphereGui = getGui().addFolder(`Segmented Sphere Mesh`);
   const analyserUniformData = getAnalyserUniformData();
   const sphereSegments = [];
@@ -99,14 +45,13 @@ export function createSegmentedSphere({ segmentCount } = { segmentCount: 2 }) {
     uMaxAudioThreshold: { value: 0.3 },
 
     uDepthColor: { value: new THREE.Color(debugObject.depthColor) },
-    uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },
-    uColorOffset: { value: 0.5 },
+    uColorOffset: { value: 0.2 },
     uColorMultiplier: { value: 10.0 },
 
-    uNoiseFactor: { value: 0.8 },
+    uNoiseFactor: { value: 0.375 },
     uNoiseSpeed: { value: 1.0 },
-    uNoiseScale: { value: 1.0 },
-    uNoiseDisplacementFactor: { value: 0.25 },
+    uNoiseScale: { value: 2.0 },
+    uNoiseDisplacementFactor: { value: 1.0 },
   };
 
   for (let i = 0; i < segmentCount; i++) {
@@ -124,6 +69,10 @@ export function createSegmentedSphere({ segmentCount } = { segmentCount: 2 }) {
     //   color: 0xffff00,
     //   side: THREE.DoubleSide,
     // });
+    const surfaceColor = getStartColor({
+      angle: i * segmentSize,
+      useDifferentColors: true,
+    });
     const hemisphereMaterial = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
@@ -137,6 +86,7 @@ export function createSegmentedSphere({ segmentCount } = { segmentCount: 2 }) {
         uSegmentCount: { value: segmentCount },
 
         ...sharedUniforms,
+        uSurfaceColor: { value: surfaceColor },
       },
       side: THREE.DoubleSide,
     });

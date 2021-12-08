@@ -125,6 +125,7 @@ float snoise(vec4 v){
 
 }
 
+// get translation matrix
 mat4 translation(vec3 translationPos) {
     float x = translationPos.x;
     float y = translationPos.y;
@@ -138,6 +139,7 @@ mat4 translation(vec3 translationPos) {
     );
 }
 
+// rotate around given axis for given angle
 mat4 rotation(vec3 axis, float angle) {
     axis = normalize(axis);
     float s = sin(angle);
@@ -159,38 +161,44 @@ float rand(vec3 x, vec3 y) {
 }
 
 void main() {
+    // get FFT audio values to work with
     float audio0 = texture2D( tAudioData, vec2( 0.0, 0.0 ) ).r;
     float audio1 = texture2D( tAudioData, vec2( 0.8, 0.0 ) ).r;
 
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);   
 
+    // get displacement based on frequency value
     float audio1Clamped = min(uMaxAudioThreshold, audio1);
     float displacement = (-uMaxAudioThreshold + audio1Clamped);
     float scaledDisplacement = displacement * uDisplacementDistance;
 
+    // rotate sphere segment to correct position
     vec3 rotationAxis = vec3(0.0, 1.0, 0.0);
     mat4 rotationMatrix =  rotation(rotationAxis, uRotationAngle);
     modelPosition = rotationMatrix * modelPosition;
 
+    // translate sphere segment to correct position 
+    // (stronger frequency means less displacement — aka. sphere collapses on beat)
     float segmentAngle = (2.0 * M_PI) / uSegmentCount;
     mat4 rotationForTranslationMatrix =  rotation(rotationAxis, (uRotationAngle - segmentAngle / 2.0));
     vec4 translationPos = rotationForTranslationMatrix * vec4(scaledDisplacement, 0.0, 0.0, 1.0);
     mat4 translationMatrix = translation(translationPos.xyz);
     modelPosition = translationMatrix * modelPosition;
 
+    // add noise to sphere using various controls
     float normalizedDisplacement = 1.0 - abs(displacement/uMaxAudioThreshold); 
     float noise = snoise(vec4(modelPosition.xyz * uNoiseScale, uTime * uNoiseSpeed));
     float noiseFactor = noise * uNoiseFactor;
     noiseFactor = noiseFactor - noiseFactor * uNoiseDisplacementFactor * normalizedDisplacement;
     float randDisplacement = 1.0 + noiseFactor;
     modelPosition = modelPosition * vec4(vec3(randDisplacement), 1.0);
-    
-    
 
-
+    // update normals
     myNormal = normalize(modelPosition.xyz);
 
+    // output position
     gl_Position = projectionMatrix * viewMatrix * modelPosition;
 
-    vDisplacement = (displacement / uMaxAudioThreshold) * -1.0;
+    // output normalized displacement
+    vDisplacement = normalizedDisplacement;
 }

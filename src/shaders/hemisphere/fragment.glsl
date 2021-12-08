@@ -42,7 +42,7 @@ void main() {
     surfaceColor.y += (cos(uTime)+1.0)/5.0;
 
     float colorStrengthVariation = uColorOffset;
-    float mixStrength = (1.0 - vDisplacement) * colorStrengthVariation + (1.0 - colorStrengthVariation);
+    float mixStrength = vDisplacement * colorStrengthVariation + (1.0 - colorStrengthVariation);
     // mixStrength = (mixStrength + uColorOffset) * uColorMultiplier;
     vec3 color = mix(uDepthColor, surfaceColor, mixStrength);
 

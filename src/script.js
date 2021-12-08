@@ -11,10 +11,7 @@ import {
 } from "./utilities/audio-analyser";
 import createSphereMesh from "./meshes/sphere-mesh";
 import createPlaneMesh from "./meshes/plane-mesh";
-import createHemisphereMesh, {
-  createHemispherePair,
-  createSegmentedSphere,
-} from "./meshes/hemisphere-mesh";
+import createSegmentedSphere from "./meshes/segmented-sphere-mesh";
 import {
   initCommonUniforms,
   updateCommonUniforms,
@@ -57,6 +54,7 @@ gui.add(debugValues, "showAxesHelper").name("Show axes helper");
 
 let basicSphereMesh;
 let hemisphereMesh;
+let sphereSegments = [];
 function initSoundConnectedGeometry() {
   // basicSphereMesh = createSphereMesh();
   // scene.add(basicSphereMesh);
@@ -70,16 +68,8 @@ function initSoundConnectedGeometry() {
   //   scene.add(planeMesh);
   // }
 
-  /* HEMISPHERE */
-  // hemisphereMesh = createHemisphereMesh();
-  // scene.add(hemisphereMesh);
-
-  /** HEMISPHERE PAIR */
-  // const [rightHemisphere, leftHemisphere] = createHemispherePair();
-  // scene.add(rightHemisphere, leftHemisphere);
-
   /** sphere Segments */
-  const sphereSegments = createSegmentedSphere();
+  sphereSegments = createSegmentedSphere();
   // sphereSegments
   scene.add(...sphereSegments);
 }
@@ -149,6 +139,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 const clock = new THREE.Clock();
 
 const tick = () => {
+  console.log("tick");
   const elapsedTime = clock.getElapsedTime();
 
   // Update material
