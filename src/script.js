@@ -91,10 +91,10 @@ initCommonUniforms();
 // scene.add(mesh);
 
 let basicSphereMesh;
+let hemisphereMesh;
 function initSoundConnectedGeometry() {
-  basicSphereMesh = createSphereMesh();
-  scene.add(basicSphereMesh);
-
+  // basicSphereMesh = createSphereMesh();
+  // scene.add(basicSphereMesh);
   // const totalPlaneCount = 1;
   // for (let i = 0; i < totalPlaneCount; i++) {
   //   let planeMesh = createPlaneMesh({
@@ -104,6 +104,9 @@ function initSoundConnectedGeometry() {
   //   });
   //   scene.add(planeMesh);
   // }
+
+  hemisphereMesh = createHemisphereMesh();
+  scene.add(hemisphereMesh);
 }
 
 // let planeMesh = createPlaneMesh({
@@ -112,9 +115,6 @@ function initSoundConnectedGeometry() {
 //   totalPlaneCount: 1,
 // });
 // scene.add(planeMesh);
-
-// const hemisphereMesh = createHemisphereMesh();
-// scene.add(hemisphereMesh);
 
 /**
  * Sizes
@@ -178,7 +178,7 @@ const tick = () => {
   updateCommonUniforms();
   updateCustomFrequencyBandData();
 
-  // console.log(basicSphereMesh.material.uniforms);
+  // console.log(hemisphereMesh.material.uniforms.tAudioData.value.image.data);
 
   setAnalyserMeshVisibility(debugValues.isAnalyzerMeshVisible);
 
