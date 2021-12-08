@@ -13,6 +13,7 @@ import createSphereMesh from "./meshes/sphere-mesh";
 import createPlaneMesh from "./meshes/plane-mesh";
 import createHemisphereMesh, {
   createHemispherePair,
+  createSegmentedSphere,
 } from "./meshes/hemisphere-mesh";
 import {
   initCommonUniforms,
@@ -74,8 +75,13 @@ function initSoundConnectedGeometry() {
   // scene.add(hemisphereMesh);
 
   /** HEMISPHERE PAIR */
-  const [rightHemisphere, leftHemisphere] = createHemispherePair();
-  scene.add(rightHemisphere, leftHemisphere);
+  // const [rightHemisphere, leftHemisphere] = createHemispherePair();
+  // scene.add(rightHemisphere, leftHemisphere);
+
+  /** sphere Segments */
+  const sphereSegments = createSegmentedSphere();
+  // sphereSegments
+  scene.add(...sphereSegments);
 }
 
 const axesHelper = new THREE.AxesHelper(5);
@@ -120,7 +126,7 @@ const camera = new THREE.PerspectiveCamera(
   0.01,
   100
 );
-camera.position.set(0, 0, 1);
+camera.position.set(0, 2, 4);
 scene.add(camera);
 
 // Controls

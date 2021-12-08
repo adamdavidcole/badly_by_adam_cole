@@ -9,6 +9,7 @@ import {
 
 import vertexShader from "../shaders/hemisphere/vertex.glsl";
 import fragmentShader from "../shaders/hemisphere/fragment.glsl";
+import { GUI } from "lil-gui";
 
 export default function createHemisphereMesh({ isLeft } = { isLeft: true }) {
   const hemisphereGui = getGui().addFolder(`Hemisphere Mesh`);
@@ -79,4 +80,110 @@ export function createHemispherePair() {
   const leftHemisphere = createHemisphereMesh({ isLeft: true });
 
   return [rightHemisphere, leftHemisphere];
+}
+
+export function createSegmentedSphere({ segmentCount } = { segmentCount: 4 }) {
+  const segmentedSphereGui = getGui().addFolder(`Segmented Sphere Mesh`);
+  const analyserUniformData = getAnalyserUniformData();
+  const sphereSegments = [];
+
+  const segmentSize = (2 * Math.PI) / segmentCount;
+  console.log("segmentSize", segmentSize);
+
+  const debugObject = {
+    depthColor: "#000000",
+    surfaceColor: "#a60808",
+  };
+  const sharedUniforms = {
+    uDisplacementDistance: { value: 3.0 },
+    uMaxAudioThreshold: { value: 0.3 },
+
+    uDepthColor: { value: new THREE.Color(debugObject.depthColor) },
+    uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },
+    uColorOffset: { value: 0.5 },
+    uColorMultiplier: { value: 10.0 },
+  };
+
+  for (let i = 0; i < segmentCount; i++) {
+    const hemisphereGeometry = new THREE.SphereGeometry(
+      1,
+      32,
+      32,
+      0,
+      segmentSize,
+      0,
+      Math.PI
+    );
+
+    // const hemisphereMaterial = new THREE.MeshBasicMaterial({
+    //   color: 0xffff00,
+    //   side: THREE.DoubleSide,
+    // });
+    const hemisphereMaterial = new THREE.ShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      uniforms: {
+        ...getCommonUniforms(),
+        ...analyserUniformData,
+
+        uMaxAudioThreshold: { value: 0.3 },
+
+        uRotationAngle: { value: i * segmentSize },
+        uSegmentCount: { value: segmentCount },
+
+        ...sharedUniforms,
+      },
+      side: THREE.DoubleSide,
+    });
+
+    const hemisphere = new THREE.Mesh(hemisphereGeometry, hemisphereMaterial);
+    // hemisphere.rotation.z = Math.PI / 2;
+    // hemisphere.position.z = -2;
+
+    sphereSegments.push(hemisphere);
+  }
+
+  segmentedSphereGui
+    .add(sharedUniforms.uDisplacementDistance, "value")
+    .min(0.0)
+    .max(20.0)
+    .step(0.01)
+    .name("Displacement distance");
+  segmentedSphereGui
+    .add(sharedUniforms.uMaxAudioThreshold, "value")
+    .min(0)
+    .max(1.0)
+    .step(0.001)
+    .name("Max Audio Threshold");
+
+  segmentedSphereGui
+    .addColor(debugObject, "depthColor")
+    .name("depthColor")
+    .onChange(() => {
+      sharedUniforms.uDepthColor.value.set(
+        new THREE.Color(debugObject.depthColor)
+      );
+    });
+  segmentedSphereGui
+    .addColor(debugObject, "surfaceColor")
+    .name("surfaceColor")
+    .onChange(() => {
+      sharedUniforms.uSurfaceColor.value.set(
+        new THREE.Color(debugObject.surfaceColor)
+      );
+    });
+  segmentedSphereGui
+    .add(sharedUniforms.uColorOffset, "value")
+    .min(0)
+    .max(1)
+    .step(0.001)
+    .name("uColorOffset");
+  segmentedSphereGui
+    .add(sharedUniforms.uColorMultiplier, "value")
+    .min(0)
+    .max(10)
+    .step(0.001)
+    .name("uColorMultiplier");
+
+  return sphereSegments;
 }
