@@ -11,7 +11,9 @@ import {
 } from "./utilities/audio-analyser";
 import createSphereMesh from "./meshes/sphere-mesh";
 import createPlaneMesh from "./meshes/plane-mesh";
-import createHemisphereMesh from "./meshes/hemisphere-mesh";
+import createHemisphereMesh, {
+  createHemispherePair,
+} from "./meshes/hemisphere-mesh";
 import {
   initCommonUniforms,
   updateCommonUniforms,
@@ -28,6 +30,7 @@ const gui = getGui();
 const debugValues = {
   isAnalyzerMeshVisible: false,
   disableAudio: false,
+  showAxesHelper: true,
 };
 
 // Canvas
@@ -48,47 +51,8 @@ const flagTexture = textureLoader.load("/textures/flag-french.jpg");
 // Geometry
 initCommonUniforms();
 
-// const geometry = new THREE.PlaneGeometry(1, 1, 100, 100);
-
-// const count = geometry.attributes.position.count;
-// const randoms = new Float32Array(count);
-
-// for (let i = 0; i < count; i++) {
-//   randoms[i] = Math.random();
-// }
-
-// geometry.setAttribute("aRandom", new THREE.BufferAttribute(randoms, 1));
-
-// // Material
-// const material = new THREE.ShaderMaterial({
-//   vertexShader: testVertexShader,
-//   fragmentShader: testFragmentShader,
-//   uniforms: {
-//     ...commonUniforms,
-//     uFrequency: { value: new THREE.Vector2(10, 5) },
-//     uColor: { value: new THREE.Color("orange") },
-//     uTexture: { value: flagTexture },
-//   },
-// });
-
-// gui
-//   .add(material.uniforms.uFrequency.value, "x")
-//   .min(0)
-//   .max(20)
-//   .step(0.01)
-//   .name("frequencyX");
-// gui
-//   .add(material.uniforms.uFrequency.value, "y")
-//   .min(0)
-//   .max(20)
-//   .step(0.01)
-//   .name("frequencyY");
-// gui.add(debugValues, "isAnalyzerMeshVisible").name("Show analyzer data");
-
-// // Mesh
-// const mesh = new THREE.Mesh(geometry, material);
-// mesh.scale.y = 2 / 3;
-// scene.add(mesh);
+gui.add(debugValues, "isAnalyzerMeshVisible").name("Show analyzer data");
+gui.add(debugValues, "showAxesHelper").name("Show axes helper");
 
 let basicSphereMesh;
 let hemisphereMesh;
@@ -105,9 +69,17 @@ function initSoundConnectedGeometry() {
   //   scene.add(planeMesh);
   // }
 
-  hemisphereMesh = createHemisphereMesh();
-  scene.add(hemisphereMesh);
+  /* HEMISPHERE */
+  // hemisphereMesh = createHemisphereMesh();
+  // scene.add(hemisphereMesh);
+
+  /** HEMISPHERE PAIR */
+  const [rightHemisphere, leftHemisphere] = createHemispherePair();
+  scene.add(rightHemisphere, leftHemisphere);
 }
+
+const axesHelper = new THREE.AxesHelper(5);
+scene.add(axesHelper);
 
 // let planeMesh = createPlaneMesh({
 //   position: new THREE.Vector3(0, 0, 0),
@@ -181,6 +153,7 @@ const tick = () => {
   // console.log(hemisphereMesh.material.uniforms.tAudioData.value.image.data);
 
   setAnalyserMeshVisibility(debugValues.isAnalyzerMeshVisible);
+  axesHelper.visible = debugValues.showAxesHelper;
 
   // Update controls
   controls.update();

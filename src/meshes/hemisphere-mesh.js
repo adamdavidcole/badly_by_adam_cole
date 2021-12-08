@@ -10,17 +10,24 @@ import {
 import vertexShader from "../shaders/hemisphere/vertex.glsl";
 import fragmentShader from "../shaders/hemisphere/fragment.glsl";
 
-export default function createHemisphereMesh() {
+export default function createHemisphereMesh({ isLeft } = { isLeft: true }) {
   const hemisphereGui = getGui().addFolder(`Hemisphere Mesh`);
   const analyserUniformData = getAnalyserUniformData();
+
+  let phiStart = 0;
+  let thetaStart = 0;
+  //   if (!isLeft) {
+  //     phiStart = Math.PI / 2.0;
+  //     thetaStart = Math.PI / 2.0;
+  //   }
 
   const hemisphereGeometry = new THREE.SphereGeometry(
     1,
     32,
     32,
-    0,
+    phiStart,
     2 * Math.PI,
-    0,
+    thetaStart,
     Math.PI / 2
   );
 
@@ -36,6 +43,7 @@ export default function createHemisphereMesh() {
       ...analyserUniformData,
 
       uMaxAudioThreshold: { value: 0.3 },
+      isLeft: { value: isLeft },
     },
     side: THREE.DoubleSide,
   });
@@ -50,6 +58,7 @@ export default function createHemisphereMesh() {
     .max(1.0)
     .step(0.001)
     .name("uMaxAudioThreshold");
+  hemisphereGui.add(hemisphereMaterial.uniforms.isLeft, "value").name("isLeft");
 
   return hemisphere;
   //   const material = new THREE.ShaderMaterial({
@@ -63,4 +72,11 @@ export default function createHemisphereMesh() {
   //       uSpikeAmplitude: { value: 0.1 },
   //     },
   //   });
+}
+
+export function createHemispherePair() {
+  const rightHemisphere = createHemisphereMesh({ isLeft: false });
+  const leftHemisphere = createHemisphereMesh({ isLeft: true });
+
+  return [rightHemisphere, leftHemisphere];
 }
