@@ -59,6 +59,9 @@ export default function createSphereMesh({ usePerlin } = {}) {
     uLightIntensity: { value: 1.0 },
     uAmbientLightIntensity: { value: 0.15 },
 
+    uShouldRotate: { value: false },
+    uRotationTimeStart: { value: 0 },
+
     uTileSpacing: { value: 10.0 },
   };
   const basicMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });

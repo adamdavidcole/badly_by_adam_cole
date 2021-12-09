@@ -5,7 +5,8 @@ uniform highp vec2 uMouse;
 uniform highp float uTime;
 uniform highp float uDisplacementScale;
 uniform sampler2D tAudioData;
-uniform bool shouldRotate;
+uniform bool uShouldRotate;
+uniform float uRotationTimeStart;
 
 
 varying float vDisplacement;
@@ -50,8 +51,8 @@ void main() {
     
     // we need to make the new positions into a vec4 so we can apply the rotation matrix
     vec4 rotatedPos = vec4(newPosition, 1.0);
-    if (shouldRotate) {
-        vec4 rotatedPos = rotateX * vec4(newPosition,1.0);
+    if (uShouldRotate) {
+        rotatedPos = rotateX * vec4(newPosition,1.0);
     }
     // we're now ready to generate the new normals after the rotation. 
     // this is crucial otherwise it will look like our light is also rotating

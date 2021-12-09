@@ -1,5 +1,6 @@
 import "./style.css";
 import * as THREE from "three";
+
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import getGui from "./utilities/debug-gui";
 
@@ -18,8 +19,10 @@ import {
   updateCommonUniforms,
   setResolutionUniform,
 } from "./utilities/common-uniforms";
+import createRecorder from "./utilities/recorder";
 
 import Scene001 from "./scenes/scene-001";
+import Scene002 from "./scenes/scene-002";
 
 import testVertexShader from "./shaders/test/vertex.glsl";
 import testFragmentShader from "./shaders/test/fragment.glsl";
@@ -28,13 +31,23 @@ import testFragmentShader from "./shaders/test/fragment.glsl";
  * Base
  */
 // Debug
-const gui = getGui();
 const debugValues = {
   isAnalyzerMeshVisible: false,
   disableAudio: false,
-  disableOrbitControls: true,
+  disableOrbitControls: false,
   showAxesHelper: true,
+  shouldRecord: false,
+  showGui: true,
 };
+const gui = getGui();
+if (!debugValues.showGui || debugValues.shouldRecord) {
+  gui.destroy();
+}
+
+// const recorder = createRecorder({
+//   name: `scene-001 ${new Date().toDateString()} ${new Date().toTimeString()}`,
+//   duration: 150,
+// });
 
 const scenes = [];
 
@@ -82,7 +95,12 @@ function initSoundConnectedGeometry() {
   // const environmentMesh = createEnvironmentMesh();
   // scene.add(environmentMesh);
 
-  const scene001 = new Scene001({ scene, camera, renderer });
+  const scene001 = new Scene002({
+    scene,
+    camera,
+    renderer,
+    shouldRecord: debugValues.shouldRecord,
+  });
   scene001.setUpScene();
   scenes.push(scene001);
 }
@@ -119,6 +137,13 @@ function setSizes() {
     sizes = {
       width: windowWidth,
       height: windowWidth * (9 / 16),
+    };
+  }
+
+  if (debugValues.shouldRecord) {
+    sizes = {
+      width: 1920,
+      height: 1080,
     };
   }
 }
@@ -192,7 +217,7 @@ const tick = () => {
   // console.log(hemisphereMesh.material.uniforms.tAudioData.value.image.data);
 
   setAnalyserMeshVisibility(debugValues.isAnalyzerMeshVisible);
-  axesHelper.visible = debugValues.showAxesHelper;
+  axesHelper.visible = debugValues.showAxesHelper && !debugValues.shouldRecord;
 
   // Update controls
   if (!debugValues.disableOrbitControls) {
@@ -201,6 +226,9 @@ const tick = () => {
 
   // Render
   renderer.render(scene, camera);
+  if (debugValues.shouldRecord) {
+    // recorder.capture(renderer.domElement);
+  }
 
   // Call tick again on the next frame
   window.requestAnimationFrame(tick);
@@ -214,6 +242,11 @@ if (debugValues.disableAudio) {
 
   tick();
 } else {
+  const fullscreenButton = document.getElementById("startFullscreen");
+  fullscreenButton.addEventListener("click", () => {
+    document.documentElement.requestFullscreen();
+  });
+
   const startButton = document.getElementById("startButton");
   startButton.addEventListener("click", onStartButtonClick);
 
@@ -224,6 +257,10 @@ if (debugValues.disableAudio) {
 
     const overlay = document.getElementById("overlay");
     overlay.remove();
+
+    if (debugValues.shouldRecord) {
+      canvas.style.cursor = "none";
+    }
 
     tick();
   }

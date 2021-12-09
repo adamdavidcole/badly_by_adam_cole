@@ -30,6 +30,7 @@ export default function createPlaneMesh({ position, i, totalPlaneCount }) {
 
       uTileFrequency: { value: 4.0 },
       uSpikeAmplitude: { value: 0.1 },
+      side: THREE.DoubleSide,
     },
   });
 
