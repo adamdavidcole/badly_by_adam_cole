@@ -1,12 +1,12 @@
 import * as THREE from "three";
 import gsap, { Power1 } from "gsap";
 
-import createPlaneMesh from "../meshes/plane-mesh";
+import createSphereMesh from "../meshes/sphere-mesh";
 import createEnvironmentMesh from "../meshes/environment-mesh";
 import { getMousePos } from "../utilities/common-uniforms";
 import createRecorder from "../utilities/recorder";
 
-export default class Scene002 {
+export default class Scene001 {
   constructor({ scene, camera, renderer, audio }) {
     this.scene = scene;
     this.camera = camera;
@@ -15,12 +15,8 @@ export default class Scene002 {
     this.meshes = [];
   }
 
-  setUpScene() {
-    const sphereMesh = createPlaneMesh({
-      position: new THREE.Vector3(0, 0, 0),
-      i: 0,
-      totalPlaneCount: 1,
-    });
+  startScene() {
+    const sphereMesh = createSphereMesh();
     const environmentMesh = createEnvironmentMesh();
 
     this.meshes.push(sphereMesh, environmentMesh);
@@ -29,34 +25,39 @@ export default class Scene002 {
       this.scene.add(mesh);
     });
 
+    // SPHERE
+    const sphereUniforms = sphereMesh.material.uniforms;
+    const uDisplacementScale = sphereUniforms.uDisplacementScale;
+    const uLightIntensity = sphereUniforms.uLightIntensity;
+    const shouldRotate = sphereUniforms.uShouldRotate;
+    const rotateTimeStart = sphereUniforms.uRotationTimeStart;
+
+    uDisplacementScale.value = 30.0;
+    uLightIntensity.value = 0.0;
+
     // camera start position
-    this.camera.position.set(0, 0, 0.25);
+    this.camera.position.set(1.2, 1.2, 0.01);
 
     // camera second position
     gsap.to(this.camera.position, {
       x: 0.0,
       y: 0.0,
-      z: 0.75,
-      duration: 5,
+      z: 2.0,
+      duration: 10.75,
+      ease: Power1.easeInOut,
+    });
+
+    gsap.to(uDisplacementScale, {
+      value: 10.0,
+      duration: 10.75,
       ease: Power1.easeIn,
     });
 
-    gsap.to(this.camera.position, {
-      x: 0.0,
-      y: -0.75,
-      z: 0.3,
-      duration: 2,
-      delay: 5,
-      //   ease: Power1.easeInOut,
+    gsap.to(uLightIntensity, {
+      value: 1.0,
+      duration: 10.75,
+      ease: Power1.easeIn,
     });
-    // gsap.to(this.camera.position, {
-    //   x: 0.0,
-    //   y: -0.05,
-    //   z: 0.75,
-    //   duration: 2,
-    //   delay: 7,
-    //   ease: Power1.easeOut,
-    // });
 
     // ENVIRONMENT
     const environmentUniforms = environmentMesh.material.uniforms;
@@ -78,6 +79,6 @@ export default class Scene002 {
   }
 
   update() {
-    this.camera.lookAt(0, 0, 0);
+    // this.camera.lookAt(0 + getMousePos().x, 0, 0);
   }
 }

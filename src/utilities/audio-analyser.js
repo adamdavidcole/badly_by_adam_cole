@@ -6,7 +6,7 @@ const FFT_SIZE = 512 * 2;
 const BAND_RANGES = [160, 300, 1500, 5000, 15000, 22000];
 const BAND_COUNT = BAND_RANGES.length;
 
-let analyser, analyserUniforms, analyserMesh;
+let analyser, analyserUniforms, analyserMesh, mediaElement;
 const frequencyBands = [];
 const heighestAmplitudePerBand = [];
 const normalizedFrequencyBands = new Uint8Array(BAND_COUNT);
@@ -64,7 +64,7 @@ export function initSound({ renderer, scene }) {
   const listener = new THREE.AudioListener();
   const audio = new THREE.Audio(listener);
   const file = SOUND_FILE_PATH;
-  const mediaElement = new Audio(file);
+  mediaElement = new Audio(file);
   mediaElement.play();
 
   audio.setMediaElementSource(mediaElement);
@@ -149,43 +149,6 @@ export function getAnalyserUniformData() {
   return analyserUniforms;
 }
 
-function updateFrequencyBandData() {
-  const averageFactor = 0.25;
-  const frequencyData = analyser.getFrequencyData();
-  const nextFrequencyBands = [];
-
-  let count = 0;
-  for (let i = 0; i < BAND_COUNT; i++) {
-    // exponentially increase number of samples per pand
-    let sum = 0;
-    let sampleCount = Math.pow(2, i + 1);
-
-    // add all remaining samples into last band
-    if (i == BAND_COUNT - 1) {
-      const remainder = FFT_SIZE / 2 - (count + sampleCount);
-      sampleCount += remainder;
-    }
-
-    // collect sum of amplitudes over sample size and then average
-    for (let j = 0; j < sampleCount; j++) {
-      sum += frequencyData[count];
-      count++;
-    }
-    const average = sum / sampleCount;
-    nextFrequencyBands[i] = Math.round(average);
-
-    // average new frequency band data with previous data for smoother results
-    frequencyBands[i] =
-      (frequencyBands[i] * averageFactor +
-        (1 - averageFactor) * nextFrequencyBands[i]) /
-      2.0;
-
-    // keep track of highest amplitude per band
-    if (frequencyBands[i] > heighestAmplitudePerBand[i]) {
-      heighestAmplitudePerBand[i] = frequencyBands[i];
-    }
-    // use heighestAmplitudePerBand value to normalize results between 0-100
-    normalizedFrequencyBands[i] =
-      (frequencyBands[i] / heighestAmplitudePerBand[i]) * 100;
-  }
+export function getAudioElement() {
+  return mediaElement;
 }

@@ -20,9 +20,7 @@ import {
   setResolutionUniform,
 } from "./utilities/common-uniforms";
 import createRecorder from "./utilities/recorder";
-
-import Scene001 from "./scenes/scene-001";
-import Scene002 from "./scenes/scene-002";
+import SceneManager from "./scenes/scene-manager";
 
 import testVertexShader from "./shaders/test/vertex.glsl";
 import testFragmentShader from "./shaders/test/fragment.glsl";
@@ -34,7 +32,7 @@ import testFragmentShader from "./shaders/test/fragment.glsl";
 const debugValues = {
   isAnalyzerMeshVisible: false,
   disableAudio: false,
-  disableOrbitControls: false,
+  disableOrbitControls: true,
   showAxesHelper: true,
   shouldRecord: false,
   showGui: true,
@@ -48,8 +46,6 @@ if (!debugValues.showGui || debugValues.shouldRecord) {
 //   name: `scene-001 ${new Date().toDateString()} ${new Date().toTimeString()}`,
 //   duration: 150,
 // });
-
-const scenes = [];
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -95,14 +91,15 @@ function initSoundConnectedGeometry() {
   // const environmentMesh = createEnvironmentMesh();
   // scene.add(environmentMesh);
 
-  const scene001 = new Scene002({
-    scene,
-    camera,
-    renderer,
-    shouldRecord: debugValues.shouldRecord,
-  });
-  scene001.setUpScene();
-  scenes.push(scene001);
+  // const scene001 = new Scene002({
+  //   scene,
+  //   camera,
+  //   renderer,
+  //   shouldRecord: debugValues.shouldRecord,
+  // });
+  // scene001.setUpScene();
+  // scenes.push(scene001);
+  sceneManager.setUpScenes();
 }
 
 const axesHelper = new THREE.AxesHelper(5);
@@ -197,6 +194,8 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 setResolutionUniform({ width: sizes.width, height: sizes.height });
 
+const sceneManager = new SceneManager({ camera, renderer, scene });
+
 /**
  * Animate
  */
@@ -209,10 +208,7 @@ const tick = () => {
   // material.uniforms.uTime.value = elapsedTime;
   updateCommonUniforms();
   updateCustomFrequencyBandData();
-
-  scenes.forEach((scene) => {
-    scene.update();
-  });
+  sceneManager.update();
 
   // console.log(hemisphereMesh.material.uniforms.tAudioData.value.image.data);
 
