@@ -32,7 +32,7 @@ export default class Scene001 {
     const shouldRotate = sphereUniforms.uShouldRotate;
     const rotateTimeStart = sphereUniforms.uRotationTimeStart;
 
-    uDisplacementScale.value = 30.0;
+    uDisplacementScale.value = 20.0;
     uLightIntensity.value = 0.0;
 
     // camera start position
@@ -50,6 +50,13 @@ export default class Scene001 {
     gsap.to(uDisplacementScale, {
       value: 10.0,
       duration: 10.75,
+      ease: Power1.easeIn,
+    });
+
+    gsap.to(uDisplacementScale, {
+      value: 6.0,
+      delay: 10.75,
+      duration: 10.75 * 2,
       ease: Power1.easeIn,
     });
 

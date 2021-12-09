@@ -32,7 +32,7 @@ import testFragmentShader from "./shaders/test/fragment.glsl";
 const debugValues = {
   isAnalyzerMeshVisible: false,
   disableAudio: false,
-  disableOrbitControls: true,
+  disableOrbitControls: false,
   showAxesHelper: true,
   shouldRecord: false,
   showGui: true,
@@ -80,6 +80,12 @@ function initSoundConnectedGeometry() {
   //     position: new THREE.Vector3(0, 0, i - totalPlaneCount / 2),
   //     i,
   //     totalPlaneCount,
+  //     rotationAngle: 0,
+
+  //     colorA: "#000000",
+  //     colorB: "#000000",
+  //     colorC: "#ffffff",
+  //     shouldUseColorC: true,
   //   });
   //   scene.add(planeMesh);
   // }
@@ -99,6 +105,7 @@ function initSoundConnectedGeometry() {
   // });
   // scene001.setUpScene();
   // scenes.push(scene001);
+
   sceneManager.setUpScenes();
 }
 
@@ -120,8 +127,6 @@ let sizes;
 function setSizes() {
   const windowWidth = window.innerWidth;
   const windowHeight = window.innerHeight;
-
-  console.log(windowWidth, windowHeight);
 
   const scale = windowWidth / windowHeight;
 
@@ -147,7 +152,6 @@ function setSizes() {
 setSizes();
 
 window.addEventListener("resize", () => {
-  console.log("resize?");
   // Update sizes
   setSizes();
 

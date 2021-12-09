@@ -152,3 +152,9 @@ export function getAnalyserUniformData() {
 export function getAudioElement() {
   return mediaElement;
 }
+
+export function setAudioCurrentTime(currentTime) {
+  if (mediaElement) {
+    mediaElement.currentTime = currentTime;
+  }
+}

@@ -10,7 +10,26 @@ import {
 import vertexShader from "../shaders/basic-plane/vertex.glsl";
 import fragmentShader from "../shaders/basic-plane/fragment.glsl";
 
-export default function createPlaneMesh({ position, i, totalPlaneCount }) {
+export default function createPlaneMesh({
+  position,
+  i,
+  totalPlaneCount,
+  rotationAngle,
+  tileFrequency = 4,
+  colorA,
+  colorB,
+  colorC,
+  shouldUseColorC,
+  spikeAmplitude = 0.1,
+} = {}) {
+  const debugObject = {
+    colorA: colorA || "#8f7619",
+    colorB: colorB || "#d11515",
+    colorC: colorC || "#0000ff",
+  };
+
+  console.log("shouldUseColorC", shouldUseColorC);
+
   const planeGui = getGui().addFolder(`Plane Mesh ${i}`);
   const analyserUniformData = getAnalyserUniformData();
   setAverageFactor(0.5);
@@ -28,8 +47,15 @@ export default function createPlaneMesh({ position, i, totalPlaneCount }) {
       ...getCommonUniforms(),
       ...analyserUniformData,
 
-      uTileFrequency: { value: 4.0 },
-      uSpikeAmplitude: { value: 0.1 },
+      uTileFrequency: { value: tileFrequency },
+      uSpikeAmplitude: { value: spikeAmplitude },
+      uRotationAngle: { value: rotationAngle },
+
+      colorA: { value: new THREE.Color(debugObject.colorA) },
+      colorB: { value: new THREE.Color(debugObject.colorB) },
+      colorC: { value: new THREE.Color(debugObject.colorC) },
+      uShouldUseColorC: { value: shouldUseColorC },
+
       side: THREE.DoubleSide,
     },
   });
@@ -47,6 +73,24 @@ export default function createPlaneMesh({ position, i, totalPlaneCount }) {
     .max(5.0)
     .step(0.001)
     .name("uSpikeAmplitude");
+  planeGui
+    .addColor(debugObject, "colorA")
+    .name("colorA")
+    .onChange(() => {
+      material.uniforms.colorA.value.set(new THREE.Color(debugObject.colorA));
+    });
+  planeGui
+    .addColor(debugObject, "colorB")
+    .name("colorB")
+    .onChange(() => {
+      material.uniforms.colorB.value.set(new THREE.Color(debugObject.colorB));
+    });
+  planeGui
+    .addColor(debugObject, "colorC")
+    .name("colorC")
+    .onChange(() => {
+      material.uniforms.colorC.value.set(new THREE.Color(debugObject.colorC));
+    });
 
   const plane = new THREE.Mesh(geometry, material);
   plane.position.set(position.x, position.y, position.z);

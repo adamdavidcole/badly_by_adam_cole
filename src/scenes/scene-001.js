@@ -16,47 +16,57 @@ export default class Scene002 {
   }
 
   startScene() {
-    const sphereMesh = createPlaneMesh({
+    const planeMesh = createPlaneMesh({
       position: new THREE.Vector3(0, 0, 0),
       i: 0,
       totalPlaneCount: 1,
+      rotationAngle: 0,
+      colorA: "#000000",
+      colorB: "#000000",
+      colorC: "#ffffff",
+      shouldUseColorC: true,
+      tileFrequency: 2,
+      spikeAmplitude: 0.07,
     });
+    const uniforms = planeMesh.material.uniforms;
+    const uSpikeAmplitude = uniforms.uSpikeAmplitude;
+
+    // planeMesh2.rotateY(Math.PI * getMousePos().x, Math.PI * getMousePos().y);
     const environmentMesh = createEnvironmentMesh();
 
-    this.meshes.push(sphereMesh, environmentMesh);
+    this.meshes.push(planeMesh, environmentMesh);
 
     this.meshes.forEach((mesh) => {
       this.scene.add(mesh);
     });
 
     // camera start position
-    this.camera.position.set(0, 0, 0.3);
+    this.camera.position.set(0, 0, 0.4);
 
     // camera second position
+    const firstTransitionTime = 5;
     gsap.to(this.camera.position, {
       x: 0.0,
       y: 0.0,
       z: 0.75,
-      duration: 5,
+      duration: firstTransitionTime,
       ease: Power1.easeIn,
     });
 
     gsap.to(this.camera.position, {
       x: 0.0,
-      y: -0.75,
-      z: 0.3,
+      y: -0.6,
+      z: 0.4,
       duration: 2,
-      delay: 5,
-      //   ease: Power1.easeInOut,
+      delay: firstTransitionTime,
+      ease: Power1.easeOut,
     });
-    // gsap.to(this.camera.position, {
-    //   x: 0.0,
-    //   y: -0.05,
-    //   z: 0.75,
-    //   duration: 2,
-    //   delay: 7,
-    //   ease: Power1.easeOut,
-    // });
+
+    gsap.to(uSpikeAmplitude, {
+      value: 0.06,
+      duration: 2,
+      delay: firstTransitionTime,
+    });
 
     // ENVIRONMENT
     const environmentUniforms = environmentMesh.material.uniforms;
@@ -66,11 +76,11 @@ export default class Scene002 {
 
     const environmentIntensity = environmentUniforms.uIntensity;
     environmentIntensity.value = 0;
-    gsap.to(environmentIntensity, {
-      value: 0.5,
-      duration: 10.75,
-      ease: Power1.easeIn,
-    });
+    // gsap.to(environmentIntensity, {
+    //   value: 0.5,
+    //   duration: 10.75,
+    //   ease: Power1.easeIn,
+    // });
   }
 
   cleanUpScene() {
