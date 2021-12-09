@@ -272,7 +272,7 @@ void main() {
 
     float perlinNoise = snoise(vec4(position * (1.0+soundValue), uTime)); 
     // float perlinNoise = cnoise(vec4(position, uTime * (1.0+soundValue))); 
-    float randDisplacement = 1.0 + perlinNoise * uDisplacementScale/100.0 ;
+    float randDisplacement = 1.0 + perlinNoise * uDisplacementScale ;
     // float soundScale = (soundValue-0.5);
     float soundDisplacement = 1.0 + soundValue / (10.0 * (2.0 - randDisplacement));
     soundDisplacement = 1.0;

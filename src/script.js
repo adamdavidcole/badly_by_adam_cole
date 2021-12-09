@@ -12,10 +12,14 @@ import {
 import createSphereMesh from "./meshes/sphere-mesh";
 import createPlaneMesh from "./meshes/plane-mesh";
 import createSegmentedSphere from "./meshes/segmented-sphere-mesh";
+import createEnvironmentMesh from "./meshes/environment-mesh";
 import {
   initCommonUniforms,
   updateCommonUniforms,
+  setResolutionUniform,
 } from "./utilities/common-uniforms";
+
+import Scene001 from "./scenes/scene-001";
 
 import testVertexShader from "./shaders/test/vertex.glsl";
 import testFragmentShader from "./shaders/test/fragment.glsl";
@@ -28,8 +32,11 @@ const gui = getGui();
 const debugValues = {
   isAnalyzerMeshVisible: false,
   disableAudio: false,
+  disableOrbitControls: true,
   showAxesHelper: true,
 };
+
+const scenes = [];
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -67,11 +74,17 @@ function initSoundConnectedGeometry() {
   //   });
   //   scene.add(planeMesh);
   // }
-
   /** sphere Segments */
-  sphereSegments = createSegmentedSphere();
-  // sphereSegments
-  scene.add(...sphereSegments);
+  // sphereSegments = createSegmentedSphere();
+  // // sphereSegments
+  // scene.add(...sphereSegments);
+  /** enviornment mesh */
+  // const environmentMesh = createEnvironmentMesh();
+  // scene.add(environmentMesh);
+
+  const scene001 = new Scene001({ scene, camera, renderer });
+  scene001.setUpScene();
+  scenes.push(scene001);
 }
 
 const axesHelper = new THREE.AxesHelper(5);
@@ -87,15 +100,34 @@ scene.add(axesHelper);
 /**
  * Sizes
  */
-const sizes = {
-  width: window.innerWidth,
-  height: window.innerHeight,
-};
+
+let sizes;
+function setSizes() {
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
+
+  console.log(windowWidth, windowHeight);
+
+  const scale = windowWidth / windowHeight;
+
+  if (windowWidth > windowHeight) {
+    sizes = {
+      width: windowHeight * (16 / 9),
+      height: windowHeight,
+    };
+  } else {
+    sizes = {
+      width: windowWidth,
+      height: windowWidth * (9 / 16),
+    };
+  }
+}
+setSizes();
 
 window.addEventListener("resize", () => {
+  console.log("resize?");
   // Update sizes
-  sizes.width = window.innerWidth;
-  sizes.height = window.innerHeight;
+  setSizes();
 
   // Update camera
   camera.aspect = sizes.width / sizes.height;
@@ -104,6 +136,8 @@ window.addEventListener("resize", () => {
   // Update renderer
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  setResolutionUniform({ width: sizes.width, height: sizes.height });
 });
 
 /**
@@ -113,16 +147,20 @@ window.addEventListener("resize", () => {
 const camera = new THREE.PerspectiveCamera(
   75,
   sizes.width / sizes.height,
-  0.01,
+  0.001,
   100
 );
 camera.position.set(0, 2, 4);
 scene.add(camera);
 
 // Controls
-const controls = new OrbitControls(camera, canvas);
-controls.listenToKeyEvents(window);
-controls.enableDamping = true;
+
+let controls;
+if (!debugValues.disableOrbitControls) {
+  controls = new OrbitControls(camera, canvas);
+  controls.listenToKeyEvents(window);
+  controls.enableDamping = true;
+}
 
 /**
  * Renderer
@@ -132,6 +170,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+setResolutionUniform({ width: sizes.width, height: sizes.height });
 
 /**
  * Animate
@@ -139,7 +178,6 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 const clock = new THREE.Clock();
 
 const tick = () => {
-  console.log("tick");
   const elapsedTime = clock.getElapsedTime();
 
   // Update material
@@ -147,13 +185,19 @@ const tick = () => {
   updateCommonUniforms();
   updateCustomFrequencyBandData();
 
+  scenes.forEach((scene) => {
+    scene.update();
+  });
+
   // console.log(hemisphereMesh.material.uniforms.tAudioData.value.image.data);
 
   setAnalyserMeshVisibility(debugValues.isAnalyzerMeshVisible);
   axesHelper.visible = debugValues.showAxesHelper;
 
   // Update controls
-  controls.update();
+  if (!debugValues.disableOrbitControls) {
+    controls.update();
+  }
 
   // Render
   renderer.render(scene, camera);

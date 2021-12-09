@@ -5,6 +5,7 @@ uniform highp vec2 uMouse;
 uniform highp float uTime;
 uniform highp float uDisplacementScale;
 uniform sampler2D tAudioData;
+uniform bool shouldRotate;
 
 
 varying float vDisplacement;
@@ -16,6 +17,7 @@ varying float vDisplacement;
 // attribute highp mat4 modelViewMatrix;
 
 varying vec3 myNormal;
+varying vec3 vFragPos;
 
 #define M_PI 3.14159265358979323846
 
@@ -25,8 +27,7 @@ float rand(vec3 x) {
 // A single value from a vector
         float soundValue = texture2D( tAudioData, vec2(0.6, 0.0 ) ).r;
         return abs(sin(cos(dot(x,vec3(soundValue)))* 100.));
-        //         return abs(sin(cos(dot(x,vec3(0.0, sin(uTime/10.0), 0.0)+1.))* 100.));
-
+        // return abs(sin(cos(dot(x,vec3(0.0, sin(uTime/10.0), 0.0)+1.))* 100.));
 }
 
 void main() {
@@ -48,7 +49,10 @@ void main() {
     vec3 newPosition = (position * randDisplacement) * soundDisplacement;
     
     // we need to make the new positions into a vec4 so we can apply the rotation matrix
-    vec4 rotatedPos = rotateX * vec4(newPosition,1.0);
+    vec4 rotatedPos = vec4(newPosition, 1.0);
+    if (shouldRotate) {
+        vec4 rotatedPos = rotateX * vec4(newPosition,1.0);
+    }
     // we're now ready to generate the new normals after the rotation. 
     // this is crucial otherwise it will look like our light is also rotating
     
@@ -64,4 +68,5 @@ void main() {
     gl_Position = projectionMatrix * modelViewMatrix * vec4(rotatedPos.xyz,1.);
 
     vDisplacement = distance(position, newPosition);
+    vFragPos = vec3(modelMatrix * rotatedPos);
 }

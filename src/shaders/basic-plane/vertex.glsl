@@ -1,3 +1,5 @@
+precision highp float;
+
 uniform vec2 uFrequency;
 uniform float uTime;
 uniform float uTileFrequency;

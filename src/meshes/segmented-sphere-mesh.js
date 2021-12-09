@@ -9,7 +9,6 @@ import {
 
 import vertexShader from "../shaders/hemisphere/vertex.glsl";
 import fragmentShader from "../shaders/hemisphere/fragment.glsl";
-import { GUI } from "lil-gui";
 
 const SURFACE_COLOR = new THREE.Color("#a60808");
 
@@ -57,8 +56,8 @@ export default function createSegmentedSphere(
   for (let i = 0; i < segmentCount; i++) {
     const hemisphereGeometry = new THREE.SphereGeometry(
       1,
-      32,
-      32,
+      64,
+      64,
       0,
       segmentSize,
       0,

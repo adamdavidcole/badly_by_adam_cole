@@ -12,7 +12,6 @@ uniform float uSegmentCount;
 
 uniform float uDisplacementDistance;
 
-
 uniform float uNoiseFactor;
 uniform float uNoiseSpeed;
 uniform float uNoiseScale;

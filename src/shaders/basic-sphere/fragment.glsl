@@ -18,32 +18,26 @@ uniform float uAmbientLightIntensity;
 // uniform float uColorMultiplier;
 
 //these values are being passed by the vertex shader
+varying vec3 vPosition;
 varying vec3 myNormal;
+varying vec3 vFragPos;
 varying float vDisplacement;
 
-
 void main() {
+    vec3 norm = normalize(myNormal);
+
     // light from the top
-    vec3 light = vec3(0.,10.,5.);
-    
-    // Get the normal of the light
-    // Remember the Unit Vector of the light is the direction of the light 
-    vec3 invert = vec3(1.,1.,1.);
-    invert=myNormal * invert;
-    
-    light = normalize(light);
-    
-    // return the maximum of either 0, or the squared distance 
-    float prod = max(0., dot(myNormal,light)) * uLightIntensity;
-    // float prod = 1.0;
+    vec3 lightColor = uDepthColor;
+    vec3 lightPos = vec3(0.0, 10.0, 5.0);
+    vec3 lightDir = normalize(lightPos - vFragPos);
 
-    float mixStrength = (vDisplacement + uColorOffset) * uColorMultiplier;
-    vec3 color = mix(uDepthColor, uSurfaceColor, mixStrength);
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = diff * lightColor * uLightIntensity;
 
-    // use the dot product of the normal and the light
-    // To calculate the shading for the sphere
-    gl_FragColor = vec4(prod, prod, prod, 1.0) * vec4(color, 1.0) + vec4(vec3(uAmbientLightIntensity),1.) * vec4(color, 1.0);
-    // float f = texture2D( tAudioData, vec2(0.8, 0.0 ) ).r;
-    // gl_FragColor = vec4(vec3(f), 1.0);
-    
+    vec3 ambient = lightColor * uAmbientLightIntensity;
+
+
+    vec3 result = (ambient + diffuse) * uSurfaceColor;
+
+    gl_FragColor = vec4(result, 1.0);    
 }

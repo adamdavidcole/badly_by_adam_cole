@@ -38,7 +38,7 @@ export default function createSphereMesh({ usePerlin } = {}) {
   const sphereGui = getGui().addFolder("Sphere Mesh");
   const debugObject = {
     depthColor: "#ffffff",
-    surfaceColor: "#ffffff",
+    surfaceColor: "#cc1414",
   };
 
   let geometry = new THREE.SphereGeometry(1, 100, 100); //
@@ -67,6 +67,7 @@ export default function createSphereMesh({ usePerlin } = {}) {
     ...getShaders({}),
   });
   let mesh = new THREE.Mesh(geometry, material);
+  mesh.rotateY(Math.PI / 4);
 
   sphereGui
     .add(uniforms.uDisplacementScale, "value")

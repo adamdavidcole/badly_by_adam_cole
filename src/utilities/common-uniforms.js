@@ -11,6 +11,12 @@ const commonUniforms = {
 function onMouseMove(event) {
   commonUniforms.uMouse.value.x = 2 * (event.clientX / window.innerWidth);
   commonUniforms.uMouse.value.y = 2 * (1 - event.clientY / window.innerHeight);
+
+  // console.log(
+  //   "mouse:",
+  //   commonUniforms.uMouse.value.x,
+  //   commonUniforms.uMouse.value.y
+  // );
 }
 
 function onWindowResize(event) {
@@ -21,6 +27,14 @@ function onWindowResize(event) {
 export function initCommonUniforms() {
   document.addEventListener("mousemove", onMouseMove);
   document.addEventListener("windowresize", onWindowResize);
+}
+
+export function setResolutionUniform({ width, height }) {
+  commonUniforms.uResolution.value = new THREE.Vector2(width, height);
+}
+
+export function getMousePos() {
+  return { x: commonUniforms.uMouse.value.x, y: commonUniforms.uMouse.value.y };
 }
 
 export default function getCommonUniforms() {
