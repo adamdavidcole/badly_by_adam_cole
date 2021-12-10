@@ -9,18 +9,17 @@ import { getMousePos } from "../utilities/common-uniforms";
 import createRecorder from "../utilities/recorder";
 
 export default class Scene009 {
-  constructor({ scene, camera, renderer, controls }) {
+  constructor({ scene, camera, renderer }) {
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
-    this.controls = controls;
 
     this.meshes = [];
   }
 
   startScene() {
     setAverageFactor(0.925);
-    setAudioCurrentTime(10.75);
+    // setAudioCurrentTime(10.75);
 
     const args = { displacementScale: 1.5 };
 
@@ -50,7 +49,9 @@ export default class Scene009 {
   }
 
   cleanUpScene() {
-    this.scene.remove(sphereMesh);
+    this.meshes.forEach((mesh) => {
+      this.scene.remove(mesh);
+    });
   }
 
   update() {

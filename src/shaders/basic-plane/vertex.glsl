@@ -41,10 +41,12 @@ void main()
     modelPosition.z += cos(modelPosition.x * audio1 * 10.0) * 0.2;
 
     float elevation = 0.0;
+    float maxElevation = 1.0;
 
     if (mod(uv.x * 100.0, uTileFrequency) < 0.1 && mod(uv.y * 100.0, uTileFrequency) < 0.1) {
         float distFromCenter = distance(uv, vec2(0.5));
         elevation = audio0 * uSpikeAmplitude / (distFromCenter + 0.1);
+        elevation = min(elevation, maxElevation);
         modelPosition.z += elevation;
     }
 

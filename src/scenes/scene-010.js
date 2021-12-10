@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import gsap, { Power1 } from "gsap";
-import { setAudioCurrentTime } from "../utilities/audio-analyser";
+import gsap, { Power1, Power2 } from "gsap";
 
 import createSphereMesh from "../meshes/sphere-mesh";
 import createSegmentedSphere from "../meshes/segmented-sphere-mesh";
 import createEnvironmentMesh from "../meshes/environment-mesh";
 import { setAverageFactor } from "../utilities/audio-analyser";
+import { setAudioCurrentTime } from "../utilities/audio-analyser";
 import { getMousePos } from "../utilities/common-uniforms";
 import createRecorder from "../utilities/recorder";
 
@@ -20,12 +20,12 @@ export default class Scene010 {
   }
 
   startScene() {
-    setAverageFactor(0.93);
-    setAudioCurrentTime(88.25);
+    setAverageFactor(0.8);
+    // setAudioCurrentTime(88.25);
 
     const sphereSegments = createSegmentedSphere({
-      segmentCount: 100,
-      displacementDistance: 0.5,
+      segmentCount: 150,
+      displacementDistance: 1.05,
       noiseFactor: 0.5,
     });
 
@@ -40,7 +40,7 @@ export default class Scene010 {
       this.scene.add(mesh);
     });
 
-    this.camera.position.set(-0.01, 1.0, -0.01);
+    this.camera.position.set(-0.01, 3.0, -0.01);
 
     gsap.to(this.camera.position, {
       y: 3.0,
@@ -66,29 +66,30 @@ export default class Scene010 {
       ease: Power1.easeInOut,
     });
 
+    const delaySpinTime = 19.55;
     gsap.to(this.controls, {
       autoRotate: true,
-      autoRotateSpeed: 50,
-      delay: 19.75,
+      autoRotateSpeed: 30,
+      delay: delaySpinTime,
       duration: 0.0,
     });
 
     gsap.to(this.controls, {
       autoRotateSpeed: 2,
-      delay: 19.76,
+      delay: delaySpinTime,
       duration: 12.0,
       ease: Power1.easeOut,
     });
 
     const noiseFactorUniform = sphereSegments[0].material.uniforms.uNoiseFactor;
     gsap.to(noiseFactorUniform, {
-      value: 0.8,
+      value: 0.5,
       delay: 19.75,
       duration: 0.0,
     });
     gsap.to(noiseFactorUniform, {
       value: 0.375,
-      delay: 19.77,
+      delay: delaySpinTime + 0.02,
       duration: 12.0,
       ease: Power1.easeIn,
     });
@@ -96,20 +97,28 @@ export default class Scene010 {
     const displacementUniform =
       sphereSegments[0].material.uniforms.uDisplacementDistance;
     gsap.to(displacementUniform, {
-      value: 0.8,
-      delay: 19.75,
-      duration: 0.0,
+      value: 1.0,
+      duration: 5.0,
+      ease: Power1.easeInOut,
+    });
+    gsap.to(displacementUniform, {
+      value: 2.0,
+      delay: delaySpinTime,
+      duration: 0.125,
+      ease: Power1.easeIn,
     });
     gsap.to(displacementUniform, {
       value: 0.5,
-      delay: 19.77,
+      delay: delaySpinTime + 0.4,
       duration: 12.0,
-      ease: Power1.easeIn,
+      ease: Power2.easeOut,
     });
   }
 
   cleanUpScene() {
-    this.scene.remove(sphereMesh);
+    this.meshes.forEach((mesh) => {
+      this.scene.remove(mesh);
+    });
   }
 
   update() {

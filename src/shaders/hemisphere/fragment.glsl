@@ -34,7 +34,7 @@ void main() {
     light = normalize(light);
     
     // return the maximum of either 0, or the squared distance 
-    float prod = max(0., dot(myNormal,light));
+    float prod = max(0., dot(myNormal,light)) * 1.1;
     // float prod = 1.0;
 
     vec3 surfaceColor = uSurfaceColor;

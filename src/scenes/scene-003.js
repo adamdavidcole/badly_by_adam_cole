@@ -17,7 +17,7 @@ export default class Scene003 {
   }
 
   startScene() {
-    setAudioCurrentTime(23.045);
+    // setAudioCurrentTime(23.045);
 
     const args = { displacementScale: 4.0 };
 
@@ -72,14 +72,17 @@ export default class Scene003 {
       x: 3.0,
       y: 0.0,
       z: 2.8,
-      duration: 4.0,
-      delay: 1.0,
+      duration: 2.5,
+      // delay: 1.0,
       ease: Power1.easeIn,
     });
   }
 
   cleanUpScene() {
-    this.scene.remove(sphereMesh);
+    this.meshes.forEach((mesh) => {
+      this.scene.remove(mesh);
+    });
+    gsap.killTweensOf(this.camera.position);
   }
 
   update() {

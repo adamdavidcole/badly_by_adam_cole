@@ -7,13 +7,10 @@ import { getMousePos } from "../utilities/common-uniforms";
 import createRecorder from "../utilities/recorder";
 
 export default class Scene001 {
-  constructor({ scene, camera, renderer, controls }) {
+  constructor({ scene, camera, renderer, audio }) {
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
-    this.controls = controls;
-
-    console.log("this.controls", this.controls);
 
     this.meshes = [];
   }
@@ -37,39 +34,11 @@ export default class Scene001 {
     const shouldRotate = sphereUniforms.uShouldRotate;
     const rotateTimeStart = sphereUniforms.uRotationTimeStart;
 
-    uDisplacementScale.value = 20.0;
-    uLightIntensity.value = 0.0;
+    uDisplacementScale.value = 6.0;
+    uLightIntensity.value = 1.0;
 
     // camera start position
-    this.camera.position.set(1.2, 1.2, 0.01);
-
-    // camera second position
-    gsap.to(this.camera.position, {
-      x: 0.0,
-      y: 0.0,
-      z: 2.0,
-      duration: 10.75,
-      ease: Power1.easeInOut,
-    });
-
-    gsap.to(uDisplacementScale, {
-      value: 10.0,
-      duration: 10.75,
-      ease: Power1.easeIn,
-    });
-
-    gsap.to(uDisplacementScale, {
-      value: 6.0,
-      delay: 10.75,
-      duration: 10.75 * 2,
-      ease: Power1.easeIn,
-    });
-
-    gsap.to(uLightIntensity, {
-      value: 1.0,
-      duration: 10.75,
-      ease: Power1.easeIn,
-    });
+    this.camera.position.set(0, 0, 3);
 
     // ENVIRONMENT
     const environmentUniforms = environmentMesh.material.uniforms;
@@ -79,29 +48,15 @@ export default class Scene001 {
 
     const environmentIntensity = environmentUniforms.uIntensity;
     environmentIntensity.value = 0.25;
-    gsap.to(environmentIntensity, {
-      value: 0.25,
-      duration: 0,
-      ease: Power1.easeIn,
-    });
-
-    this.controls.enableRotate = false;
   }
 
   cleanUpScene() {
     this.meshes.forEach((mesh) => {
       this.scene.remove(mesh);
     });
-
-    gsap.killTweensOf(this.camera.position);
-    this.controls.enableRotate = true;
-    this.controls.target = new THREE.Vector3(0, 0, 0);
-    // gsap.killTweensOf(uDisplacementScale);
-    // gsap.killTweensOf(uLightIntensity);
   }
 
   update() {
-    // this.camera.lookAt(0 + getMousePos().x, 0, 0);
-    this.controls.target = this.camera.position;
+    this.camera.lookAt(0, 0, 0);
   }
 }

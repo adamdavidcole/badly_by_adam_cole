@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import getGui from "./debug-gui";
 
-const SOUND_FILE_PATH = "./sounds/ROSALIA-MALAMENTE.mp3";
+const SOUND_FILE_PATH = "./sounds/ROSALIA-MALAMENTE_short.mp3";
 const FFT_SIZE = 512 * 2;
 const BAND_RANGES = [160, 300, 1500, 5000, 15000, 22000];
 const BAND_COUNT = BAND_RANGES.length;
@@ -155,6 +155,6 @@ export function getAudioElement() {
 
 export function setAudioCurrentTime(currentTime) {
   if (mediaElement) {
-    mediaElement.currentTime = currentTime;
+    // mediaElement.currentTime = currentTime;
   }
 }

@@ -28,8 +28,6 @@ export default function createPlaneMesh({
     colorC: colorC || "#0000ff",
   };
 
-  console.log("shouldUseColorC", shouldUseColorC);
-
   const planeGui = getGui().addFolder(`Plane Mesh ${i}`);
   const analyserUniformData = getAnalyserUniformData();
   setAverageFactor(0.5);

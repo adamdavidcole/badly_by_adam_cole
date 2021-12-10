@@ -16,7 +16,7 @@ export default class Scene005 {
   }
 
   startScene() {
-    setAudioCurrentTime(29);
+    // setAudioCurrentTime(29);
     const segmentedSpheres = createSegmentedSphere({
       segmentCount: 2,
       displacementDistance: 5,

@@ -17,7 +17,7 @@ export default class Scene002 {
   }
 
   startScene() {
-    setAudioCurrentTime(17.65);
+    //setAudioCurrentTime(17.65);
     // const planeMeshA = createPlaneMesh({
     //   position: new THREE.Vector3(-1, 0, 0),
     //   i: 0,
@@ -128,7 +128,9 @@ export default class Scene002 {
   }
 
   cleanUpScene() {
-    this.scene.remove(sphereMesh);
+    this.meshes.forEach((mesh) => {
+      this.scene.remove(mesh);
+    });
   }
 
   update() {

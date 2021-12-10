@@ -21,9 +21,9 @@ export default class Scene002 {
       i: 0,
       totalPlaneCount: 1,
       rotationAngle: 0,
-      colorA: "#000000",
-      colorB: "#000000",
-      colorC: "#ffffff",
+      // colorA: "#000000",
+      // colorB: "#000000",
+      colorC: "#ff4d00",
       shouldUseColorC: true,
       tileFrequency: 2,
       spikeAmplitude: 0.07,
@@ -43,32 +43,7 @@ export default class Scene002 {
     });
 
     // camera start position
-    this.camera.position.set(0, 0, 0.4);
-
-    // camera second position
-    const firstTransitionTime = 3;
-    gsap.to(this.camera.position, {
-      x: 0.0,
-      y: 0.0,
-      z: 0.75,
-      duration: firstTransitionTime,
-      ease: Power1.easeIn,
-    });
-
-    gsap.to(this.camera.position, {
-      x: 0.0,
-      y: -0.6,
-      z: 0.4,
-      duration: 2,
-      delay: firstTransitionTime,
-      ease: Power1.easeOut,
-    });
-
-    gsap.to(uSpikeAmplitude, {
-      value: 0.06,
-      duration: 2,
-      delay: firstTransitionTime,
-    });
+    this.camera.position.set(0, -0.6, 0.4);
 
     // ENVIRONMENT
     const environmentUniforms = environmentMesh.material.uniforms;
@@ -77,21 +52,13 @@ export default class Scene002 {
     environmentUniforms.uShapeThreshold.value = 0.05;
 
     const environmentIntensity = environmentUniforms.uIntensity;
-    environmentIntensity.value = 0.0;
-    // gsap.to(environmentIntensity, {
-    //   value: 0.5,
-    //   duration: 10.75,
-    //   ease: Power1.easeIn,
-    // });
+    environmentIntensity.value = 0.25;
   }
 
   cleanUpScene() {
     this.meshes.forEach((mesh) => {
       this.scene.remove(mesh);
     });
-
-    gsap.killTweensOf(this.camera.position);
-    // gsap.killTweensOf(uSpikeAmplitude);
   }
 
   update() {

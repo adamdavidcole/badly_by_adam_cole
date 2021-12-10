@@ -17,7 +17,7 @@ export default class Scene004 {
   }
 
   startScene() {
-    setAudioCurrentTime(23.045);
+    // setAudioCurrentTime(23.045);
     const radiusFactor = 5;
     const sphereSegments = 10;
     const heightSegments = 10;
@@ -62,7 +62,9 @@ export default class Scene004 {
   }
 
   cleanUpScene() {
-    this.scene.remove(sphereMesh);
+    this.meshes.forEach((mesh) => {
+      this.scene.remove(mesh);
+    });
   }
 
   update() {

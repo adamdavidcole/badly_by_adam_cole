@@ -34,8 +34,9 @@ const debugValues = {
   disableAudio: false,
   disableOrbitControls: false,
   showAxesHelper: true,
-  shouldRecord: false,
+  shouldRecord: true,
   showGui: true,
+  shouldPlayAll: true,
 };
 const gui = getGui();
 if (!debugValues.showGui || debugValues.shouldRecord) {
@@ -106,7 +107,11 @@ function initSoundConnectedGeometry() {
   // scene001.setUpScene();
   // scenes.push(scene001);
 
-  sceneManager.setUpScenes();
+  if (!debugValues.shouldPlayAll) {
+    sceneManager.setUpScenes(10);
+  } else {
+    sceneManager.initAudio();
+  }
 }
 
 const axesHelper = new THREE.AxesHelper(5);
@@ -171,10 +176,10 @@ window.addEventListener("resize", () => {
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(
-  75,
+  70,
   sizes.width / sizes.height,
   0.001,
-  100
+  1000 // 100
 );
 camera.position.set(0, 0, 3);
 scene.add(camera);
@@ -186,6 +191,9 @@ if (!debugValues.disableOrbitControls) {
   controls = new OrbitControls(camera, canvas);
   controls.listenToKeyEvents(window);
   controls.enableDamping = true;
+  controls.enablePan = false;
+  controls.enableZoom = false;
+  controls.enableRotate = false;
 }
 
 /**
@@ -198,7 +206,13 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 setResolutionUniform({ width: sizes.width, height: sizes.height });
 
-const sceneManager = new SceneManager({ camera, renderer, scene, controls });
+const sceneManager = new SceneManager({
+  camera,
+  renderer,
+  scene,
+  controls,
+  shouldPlayAll: debugValues.shouldPlayAll,
+});
 
 /**
  * Animate
