@@ -1,10 +1,10 @@
-# Three.js Journey
+# Badly
+
+Watch the finished piece [here](https://badly-by-adam-cole.netlify.app/)
 
 ## Setup
-Download [Node.js](https://nodejs.org/en/download/).
-Run this followed commands:
 
-``` bash
+```bash
 # Install dependencies (only the first time)
 npm install
 

@@ -78,16 +78,7 @@ export default class SceneManager {
     return currentTime >= cueTime && currentTime < cueTime + audioCueThreshold;
   }
 
-  playAll() {
-    // opening pan
-    // white plane
-    // red ball
-    // color plane
-    // camera pan multi-ball
-    // color field zoomed in
-    // color field zoomout out
-    // final scene
-  }
+  playAll() {}
 
   setUpScenes(sceneNumber) {
     this.activeScene = this.scenes[sceneNumber];
