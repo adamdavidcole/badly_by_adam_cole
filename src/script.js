@@ -144,8 +144,8 @@ function setSizes() {
 
   if (debugValues.shouldRecord) {
     sizes = {
-      width: 1920,
-      height: 1080,
+      width: 1728,
+      height: 972,
     };
   }
 }
@@ -176,7 +176,7 @@ const camera = new THREE.PerspectiveCamera(
   0.001,
   100
 );
-camera.position.set(0, 2, 4);
+camera.position.set(0, 0, 3);
 scene.add(camera);
 
 // Controls
@@ -198,7 +198,7 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 setResolutionUniform({ width: sizes.width, height: sizes.height });
 
-const sceneManager = new SceneManager({ camera, renderer, scene });
+const sceneManager = new SceneManager({ camera, renderer, scene, controls });
 
 /**
  * Animate

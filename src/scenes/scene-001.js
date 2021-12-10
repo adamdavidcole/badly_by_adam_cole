@@ -32,7 +32,7 @@ export default class Scene002 {
     const uSpikeAmplitude = uniforms.uSpikeAmplitude;
 
     // planeMesh2.rotateY(Math.PI * getMousePos().x, Math.PI * getMousePos().y);
-    const environmentMesh = createEnvironmentMesh();
+    const environmentMesh = createEnvironmentMesh({});
 
     this.meshes.push(planeMesh, environmentMesh);
 

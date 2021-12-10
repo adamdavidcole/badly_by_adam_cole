@@ -168,7 +168,7 @@ void main() {
 
     // get displacement based on frequency value
     float audio1Clamped = min(uMaxAudioThreshold, audio1);
-    float displacement = (-uMaxAudioThreshold + audio1Clamped);
+    float displacement = -audio1Clamped;
     float scaledDisplacement = displacement * uDisplacementDistance;
 
     // rotate sphere segment to correct position

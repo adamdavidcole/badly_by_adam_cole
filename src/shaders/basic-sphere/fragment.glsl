@@ -11,6 +11,7 @@ uniform float uColorMultiplier;
 
 uniform float uLightIntensity;
 uniform float uAmbientLightIntensity;
+uniform vec3 uLightPosition;
 
 // uniform vec3 uDepthColor;
 // uniform vec3 uSurfaceColor;
@@ -23,12 +24,13 @@ varying vec3 myNormal;
 varying vec3 vFragPos;
 varying float vDisplacement;
 
+
 void main() {
     vec3 norm = normalize(myNormal);
 
     // light from the top
     vec3 lightColor = uDepthColor;
-    vec3 lightPos = vec3(0.0, 10.0, 5.0);
+    vec3 lightPos = uLightPosition;
     vec3 lightDir = normalize(lightPos - vFragPos);
 
     float diff = max(dot(norm, lightDir), 0.0);

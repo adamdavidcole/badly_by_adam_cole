@@ -17,7 +17,9 @@ export default class Scene001 {
 
   startScene() {
     const sphereMesh = createSphereMesh();
-    const environmentMesh = createEnvironmentMesh();
+    const environmentMesh = createEnvironmentMesh({
+      backgroundColor: "#0e0a01",
+    });
 
     this.meshes.push(sphereMesh, environmentMesh);
 
@@ -73,10 +75,10 @@ export default class Scene001 {
     environmentUniforms.uShapeThreshold.value = 0.05;
 
     const environmentIntensity = environmentUniforms.uIntensity;
-    environmentIntensity.value = 0;
+    environmentIntensity.value = 0.25;
     gsap.to(environmentIntensity, {
-      value: 0.5,
-      duration: 10.75,
+      value: 0.25,
+      duration: 0,
       ease: Power1.easeIn,
     });
   }

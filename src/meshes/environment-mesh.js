@@ -10,10 +10,14 @@ import {
 import vertexShader from "../shaders/environment/vertex.glsl";
 import fragmentShader from "../shaders/environment/fragment.glsl";
 
-export default function createEnvironmentMesh() {
+export default function createEnvironmentMesh({
+  backgroundColor = "#8f7619",
+  foregroundColor = "#d11515",
+  intensity = 0.5,
+} = {}) {
   const debugObject = {
-    backgroundColor: "#8f7619",
-    foregroundColor: "#d11515",
+    backgroundColor,
+    foregroundColor,
   };
   const environmentGui = getGui().addFolder("Environment");
   const analyserUniformData = getAnalyserUniformData();
@@ -40,7 +44,7 @@ export default function createEnvironmentMesh() {
       uTranslationY: { value: 0.0 },
       uSpeed: { value: 1.0 },
       uShapeThreshold: { value: 0.06 },
-      uIntensity: { value: 0.75 },
+      uIntensity: { value: intensity },
 
       uBackgroundColor: { value: new THREE.Color(debugObject.backgroundColor) },
       uForegroundColor: { value: new THREE.Color(debugObject.foregroundColor) },

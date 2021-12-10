@@ -6,6 +6,7 @@ uniform highp float uTime;
 uniform highp float uDisplacementScale;
 uniform sampler2D tAudioData;
 uniform bool uShouldRotate;
+uniform float uStartRotation;
 uniform float uRotationTimeStart;
 
 
@@ -32,7 +33,10 @@ float rand(vec3 x) {
 }
 
 void main() {
-    float angle = uTime;
+    float angle = uStartRotation;
+    if (uShouldRotate) {
+        angle += uTime;
+    }
     //rotation
     mat4 rotateX = mat4(1,0,0,0,0,cos(angle),sin(angle),0,0,-sin(angle),cos(angle),0,0,0,0,1);
     //mat4 scale = mat4(0.33,0.0,0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,0.5,0.0,0.0,0.0,0.0,1.0);
@@ -50,10 +54,9 @@ void main() {
     vec3 newPosition = (position * randDisplacement) * soundDisplacement;
     
     // we need to make the new positions into a vec4 so we can apply the rotation matrix
-    vec4 rotatedPos = vec4(newPosition, 1.0);
-    if (uShouldRotate) {
+    vec4 
         rotatedPos = rotateX * vec4(newPosition,1.0);
-    }
+    
     // we're now ready to generate the new normals after the rotation. 
     // this is crucial otherwise it will look like our light is also rotating
     

@@ -12,6 +12,7 @@ import spikeFragmentShader from "../shaders/sphere-spikes/fragment.glsl";
 
 import perlinVertexShader from "../shaders/basic-sphere-perlin/vertex.glsl";
 import perlinFragmentShader from "../shaders/basic-sphere-perlin/fragment.glsl";
+import { random } from "gsap/all";
 
 function getShaders({ usePerlin, useSpikes } = {}) {
   if (usePerlin) {
@@ -34,7 +35,13 @@ function getShaders({ usePerlin, useSpikes } = {}) {
   };
 }
 
-export default function createSphereMesh({ usePerlin } = {}) {
+export default function createSphereMesh({
+  usePerlin,
+  displacementScale = 10.0,
+  shouldRotate = false,
+  startRotation = 0,
+  lightPosition = new THREE.Vector3(0.0, 10.0, 5.0),
+} = {}) {
   const sphereGui = getGui().addFolder("Sphere Mesh");
   const debugObject = {
     depthColor: "#ffffff",
@@ -49,7 +56,7 @@ export default function createSphereMesh({ usePerlin } = {}) {
     ...getCommonUniforms(),
     ...analyserUniformData,
 
-    uDisplacementScale: { value: 10.0 },
+    uDisplacementScale: { value: displacementScale },
 
     uDepthColor: { value: new THREE.Color(debugObject.depthColor) },
     uSurfaceColor: { value: new THREE.Color(debugObject.surfaceColor) },
@@ -58,8 +65,10 @@ export default function createSphereMesh({ usePerlin } = {}) {
 
     uLightIntensity: { value: 1.0 },
     uAmbientLightIntensity: { value: 0.15 },
+    uLightPosition: { value: lightPosition },
 
-    uShouldRotate: { value: false },
+    uShouldRotate: { value: shouldRotate },
+    uStartRotation: { value: startRotation },
     uRotationTimeStart: { value: 0 },
 
     uTileSpacing: { value: 10.0 },

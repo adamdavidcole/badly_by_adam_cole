@@ -25,9 +25,14 @@ function getStartColor({ angle, useDifferentColors }) {
   return new THREE.Color(r, g, b);
 }
 
-export default function createSegmentedSphere(
-  { segmentCount } = { segmentCount: 2 }
-) {
+export default function createSegmentedSphere({
+  segmentCount = 2.0,
+  displacementDistance = 3.0,
+  noiseScale = 2.0,
+  noiseFactor = 0.375,
+  audioThreshold = 0.3,
+  noiseDisplacementFactor = 1.0,
+} = {}) {
   const segmentedSphereGui = getGui().addFolder(`Segmented Sphere Mesh`);
   const analyserUniformData = getAnalyserUniformData();
   const sphereSegments = [];
@@ -40,24 +45,24 @@ export default function createSegmentedSphere(
     surfaceColor: "#a60808",
   };
   const sharedUniforms = {
-    uDisplacementDistance: { value: 3.0 },
-    uMaxAudioThreshold: { value: 0.3 },
+    uDisplacementDistance: { value: displacementDistance },
+    uMaxAudioThreshold: { value: audioThreshold },
 
     uDepthColor: { value: new THREE.Color(debugObject.depthColor) },
     uColorOffset: { value: 0.2 },
     uColorMultiplier: { value: 10.0 },
 
-    uNoiseFactor: { value: 0.375 },
+    uNoiseFactor: { value: noiseFactor },
     uNoiseSpeed: { value: 1.0 },
-    uNoiseScale: { value: 2.0 },
-    uNoiseDisplacementFactor: { value: 1.0 },
+    uNoiseScale: { value: noiseScale },
+    uNoiseDisplacementFactor: { value: noiseDisplacementFactor },
   };
 
   for (let i = 0; i < segmentCount; i++) {
     const hemisphereGeometry = new THREE.SphereGeometry(
       1,
-      64,
-      64,
+      100,
+      100,
       0,
       segmentSize,
       0,
