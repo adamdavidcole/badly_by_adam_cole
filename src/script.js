@@ -147,12 +147,12 @@ function setSizes() {
     };
   }
 
-  if (debugValues.shouldRecord) {
-    sizes = {
-      width: 1728,
-      height: 972,
-    };
-  }
+  // if (debugValues.shouldRecord) {
+  //   sizes = {
+  //     width: 1728,
+  //     height: 972,
+  //   };
+  // }
 }
 setSizes();
 
@@ -261,10 +261,18 @@ if (debugValues.disableAudio) {
     document.documentElement.requestFullscreen();
   });
 
+  if (debugValues.shouldPlayAll) {
+    fullscreenButton.remove();
+  }
+
   const startButton = document.getElementById("startButton");
   startButton.addEventListener("click", onStartButtonClick);
 
   function onStartButtonClick() {
+    if (debugValues.shouldPlayAll) {
+      document.documentElement.requestFullscreen();
+    }
+
     initSound({ scene, renderer });
 
     initSoundConnectedGeometry();

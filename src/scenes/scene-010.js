@@ -52,7 +52,7 @@ export default class Scene010 {
       y: 3.0,
       x: -3.0,
       z: -3.0,
-      duration: 1.0,
+      duration: 0.8,
       delay: 5.0,
       ease: Power1.easeInOut,
     });
@@ -97,10 +97,23 @@ export default class Scene010 {
     const displacementUniform =
       sphereSegments[0].material.uniforms.uDisplacementDistance;
     gsap.to(displacementUniform, {
-      value: 1.0,
+      value: 1.2,
       duration: 5.0,
       ease: Power1.easeInOut,
     });
+
+    gsap.to(displacementUniform, {
+      value: 4.0,
+      duration: 0.0,
+      delay: 16,
+    });
+
+    gsap.to(displacementUniform, {
+      value: 1.2,
+      duration: 0.0,
+      delay: 17,
+    });
+
     gsap.to(displacementUniform, {
       value: 2.0,
       delay: delaySpinTime,
