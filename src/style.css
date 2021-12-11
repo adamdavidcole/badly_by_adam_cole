@@ -50,3 +50,21 @@ body {
   text-transform: uppercase;
   cursor: pointer;
 }
+
+#credits {
+  position: absolute;
+  color: white;
+  z-index: 1;
+  text-align: center;
+  font-family: Helvetica, Sans-Serif;
+  z-index: 1;
+  display: none;
+}
+
+#credits h2 + h2 {
+  margin-top: 10px;
+}
+
+#credits h3 {
+  margin-top: 400px;
+}

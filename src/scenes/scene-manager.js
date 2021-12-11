@@ -91,6 +91,12 @@ export default class SceneManager {
     }
   }
 
+  displayCredits() {
+    const creditsDiv = document.getElementById("credits");
+    console.log(creditsDiv);
+    creditsDiv.style.display = "block";
+  }
+
   update() {
     // opening pan
     if (this.shouldPlayAll) {
@@ -132,6 +138,10 @@ export default class SceneManager {
       if (this.isAudioCue(49)) {
         this.cleanUpScene();
         this.setUpScenes(10);
+      }
+
+      if (this.isAudioCue(90)) {
+        this.displayCredits();
       }
     }
 
