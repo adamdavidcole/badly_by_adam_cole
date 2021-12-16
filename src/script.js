@@ -270,7 +270,14 @@ if (debugValues.disableAudio) {
 
   function onStartButtonClick() {
     if (debugValues.shouldPlayAll) {
-      document.documentElement.requestFullscreen();
+      const docEl = document.documentElement;
+      const requestFullScreen =
+        docEl.requestFullscreen ||
+        docEl.webkitRequestFullscreen ||
+        docEl.mozRequestFullScreen ||
+        docEl.msRequestFullscreen;
+
+      if (requestFullScreen) requestFullScreen();
     }
 
     initSound({ scene, renderer });
