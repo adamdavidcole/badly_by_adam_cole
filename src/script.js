@@ -9,6 +9,7 @@ import {
   setAnalyserMeshVisibility,
   updateCustomFrequencyBandData,
   getAnalyserUniformData,
+  getAudioElement,
 } from "./utilities/audio-analyser";
 import createSphereMesh from "./meshes/sphere-mesh";
 import createPlaneMesh from "./meshes/plane-mesh";
@@ -256,41 +257,47 @@ if (debugValues.disableAudio) {
 
   tick();
 } else {
-  const fullscreenButton = document.getElementById("startFullscreen");
-  fullscreenButton.addEventListener("click", () => {
-    document.documentElement.requestFullscreen();
-  });
+  // const fullscreenButton = document.getElementById("startFullscreen");
+  // fullscreenButton.addEventListener("click", () => {
+  //   document.documentElement.requestFullscreen();
+  // });
 
-  if (debugValues.shouldPlayAll) {
-    fullscreenButton.remove();
-  }
+  // if (debugValues.shouldPlayAll) {
+  //   fullscreenButton.remove();
+  // }
 
   const startButton = document.getElementById("startButton");
   startButton.addEventListener("click", onStartButtonClick);
 
   function onStartButtonClick() {
     if (debugValues.shouldPlayAll) {
-      const docEl = document.documentElement;
-      const requestFullScreen =
-        docEl.requestFullscreen ||
-        docEl.webkitRequestFullscreen ||
-        docEl.mozRequestFullScreen ||
-        docEl.msRequestFullscreen;
-
-      if (requestFullScreen) requestFullScreen();
+      /* When the openFullscreen() function is executed, open the video in fullscreen.
+Note that we must include prefixes for different browsers, as they don't support the requestFullscreen property yet */
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      }
     }
 
-    initSound({ scene, renderer });
+    const waitForAudioReadyInterval = setInterval(() => {
+      if (getAudioElement().readyState == 4) {
+        clearInterval(waitForAudioReadyInterval);
 
-    initSoundConnectedGeometry();
+        initSound({ scene, renderer });
+        initSoundConnectedGeometry();
 
-    const overlay = document.getElementById("overlay");
-    overlay.remove();
+        const overlay = document.getElementById("overlay");
+        overlay.remove();
 
-    if (debugValues.shouldRecord) {
-      canvas.style.cursor = "none";
-    }
+        if (debugValues.shouldRecord) {
+          canvas.style.cursor = "none";
+        }
 
-    tick();
+        tick();
+
+        return;
+      }
+    }, 100);
+
+    startButton.innerHTML = "Loading...";
   }
 }

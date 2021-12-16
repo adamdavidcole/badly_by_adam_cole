@@ -6,10 +6,12 @@ const FFT_SIZE = 512 * 2;
 const BAND_RANGES = [160, 300, 1500, 5000, 15000, 22000];
 const BAND_COUNT = BAND_RANGES.length;
 
-let analyser, analyserUniforms, analyserMesh, mediaElement;
+let analyser, analyserUniforms, analyserMesh;
 const frequencyBands = [];
 const heighestAmplitudePerBand = [];
 const normalizedFrequencyBands = new Uint8Array(BAND_COUNT);
+
+const mediaElement = new Audio(SOUND_FILE_PATH);
 
 const gui = getGui();
 const debugValues = {
@@ -63,8 +65,7 @@ function getBucketCountsPerBand() {
 export function initSound({ renderer, scene }) {
   const listener = new THREE.AudioListener();
   const audio = new THREE.Audio(listener);
-  const file = SOUND_FILE_PATH;
-  mediaElement = new Audio(file);
+
   mediaElement.play();
 
   audio.setMediaElementSource(mediaElement);
